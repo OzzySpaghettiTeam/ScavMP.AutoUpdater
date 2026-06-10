@@ -11,7 +11,7 @@ set VER_MOD=.version_mod
 
 :: 1. BepInEx (Windows x64)
 echo ==> Проверка BepInEx...
-for /f "delims=" %%U in ('powershell -Command "(Invoke-RestMethod https://api.github.com/repos/BepInEx/BepInEx/releases/latest).assets | Where-Object { $_.name -like '*BepInEx_x64*' -and $_.name -like '*.zip' } | Select-Object -ExpandProperty browser_download_url"') do set "BEP_URL=%%U"
+for /f "delims=" %%U in ('powershell -Command "(Invoke-RestMethod https://api.github.com/repos/BepInEx/BepInEx/releases/latest).assets | Where-Object { $_.name -like '*BepInEx_win_x64*' -and $_.name -like '*.zip' } | Select-Object -ExpandProperty browser_download_url"') do set "BEP_URL=%%U"
 for /f "delims=" %%T in ('powershell -Command "(Invoke-RestMethod https://api.github.com/repos/BepInEx/BepInEx/releases/latest).tag_name"') do set "BEP_TAG=%%T"
 
 if exist "%VER_BEP%" set /p STORED_BEP=<"%VER_BEP%"

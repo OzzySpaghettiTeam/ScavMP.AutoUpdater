@@ -14,26 +14,34 @@ fetch_latest_release() {
     local repo="$1"; local filter="${2:-}"
     local api="https://api.github.com/repos/${repo}/releases/latest"
     local json; json=$(curl -sSf "$api")
+
     if command -v jq >/dev/null 2>&1; then
         TAG=$(echo "$json" | jq -r '.tag_name')
         if [ -n "$filter" ]; then
-            URL=$(echo "$json" | jq -r --arg f "$filter" '.assets[] | select(.name|test($f)) | .browser_download_url' | head -1)
+            URL=$(echo "$json" | jq -r --arg f "$filter" '.assets[] | select(.name|test($f;"i")) | .browser_download_url' | head -1)
         else
             URL=$(echo "$json" | jq -r '.assets[0].browser_download_url')
         fi
     else
         TAG=$(echo "$json" | grep -oP '"tag_name":\s*"\K[^"]+')
         if [ -n "$filter" ]; then
-            URL=$(echo "$json" | grep -oP '"browser_download_url":\s*"\K[^"]*'"${filter}"'[^"]*\.zip' | head -1)
+            URL=$(echo "$json" | grep -oP '"browser_download_url":\s*"\K[^"]*'"$filter"'.*\.zip' | head -1)
         else
             URL=$(echo "$json" | grep -oP '"browser_download_url":\s*"\K[^"]+' | head -1)
         fi
     fi
+
+    # Проверка, что URL не пуст
+    if [ -z "$URL" ]; then
+        echo "ОШИБКА: не удалось найти архив по фильтру '$filter' в релизе $TAG" >&2
+        exit 1
+    fi
 }
+
 
 # 1. BepInEx (Windows x64)
 echo "==> Проверка BepInEx..."
-fetch_latest_release "BepInEx/BepInEx" "BepInEx_x64.*\\.zip"
+fetch_latest_release "BepInEx/BepInEx" "BepInEx_win_x64.*\\.zip"
 STORED_TAG_BEP=$(cat "$VER_BEP" 2>/dev/null || true)
 if [ "$TAG" != "$STORED_TAG_BEP" ]; then
     echo "Обновляю BepInEx до $TAG..."
