@@ -1,4 +1,4 @@
 ## Windows
-`C:\Windows\System32\curl.exe -sSfL -o C:\users\ssd\AppData\Local\Temp\Updater.bat https://raw.githubusercontent.com/OzzySpaghettiTeam/ScavMP.AutoUpdater/main/Updater.bat`
+`C:\Windows\System32\curl.exe -sSfL -o %TEMP%\Updater.bat https://raw.githubusercontent.com/OzzySpaghettiTeam/ScavMP.AutoUpdater/main/Updater.bat && %TEMP%\Updater.bat %command%`
 ## Linux
 `wget -qO- https://raw.githubusercontent.com/OzzySpaghettiTeam/ScavMP.AutoUpdater/main/Updater.sh | bash -s -- %command%`
